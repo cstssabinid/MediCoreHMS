@@ -5,7 +5,7 @@ const THEME_KEY = 'berwa_hms_theme';
 function getInitialTheme() {
   const savedTheme = localStorage.getItem(THEME_KEY);
   if (savedTheme === 'dark' || savedTheme === 'light') return savedTheme;
-  return 'light';
+  return 'dark';
 }
 
 function ThemeToggle() {

@@ -7,7 +7,7 @@ import './App.css';
 const savedTheme = localStorage.getItem('berwa_hms_theme');
 const initialTheme = savedTheme === 'dark' || savedTheme === 'light'
   ? savedTheme
-  : 'light';
+  : 'dark';
 document.documentElement.dataset.theme = initialTheme;
 
 ReactDOM.createRoot(document.getElementById('root')).render(
