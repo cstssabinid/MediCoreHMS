@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "node src/index.js",
+    "start": "node src/seeds/seed-if-empty.js && node src/index.js",
     "dev": "nodemon src/index.js",
     "seed": "node src/seeds/seed.js"
   },
