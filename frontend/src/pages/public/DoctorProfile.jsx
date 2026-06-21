@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import { useParams, Link } from 'react-router-dom';
 
 function DoctorProfile() {
   const { id } = useParams();
   const [doc, setDoc] = useState(null);
   useEffect(() => {
-    axios.get(`/api/public/doctors/${id}`).then(r => { setDoc(r.data.doctor); }).catch(console.error);
+    api.get(`/public/doctors/${id}`).then(r => { setDoc(r.data.doctor); }).catch(console.error);
   }, [id]);
   if (!doc) return <div className="card">Loading...</div>;
   return (

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 
 function AppointmentsPublic() {
   const [locations, setLocations] = useState([]);
@@ -8,13 +8,13 @@ function AppointmentsPublic() {
   const [form, setForm] = useState({ patient_name: '', patient_phone: '', patient_email: '', patient_dob: '', gender: '', location_id: '', department_id: '', doctor_id: '', appointment_type: 'In-person', scheduled_at: '' });
 
   useEffect(() => {
-    axios.get('/api/public/locations').then(r => setLocations(r.data.locations)).catch(console.error);
-    axios.get('/api/public/departments').then(r => setDepartments(r.data.departments)).catch(console.error);
-    axios.get('/api/public/doctors').then(r => setDoctors(r.data.doctors)).catch(console.error);
+    api.get('/public/locations').then(r => setLocations(r.data.locations)).catch(console.error);
+    api.get('/public/departments').then(r => setDepartments(r.data.departments)).catch(console.error);
+    api.get('/public/doctors').then(r => setDoctors(r.data.doctors)).catch(console.error);
   }, []);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-  const handleSubmit = (e) => { e.preventDefault(); axios.post('/api/public/appointments', form).then(r => alert('Appointment requested: ' + r.data.appointment.reference)).catch(err => alert(err.response?.data?.error || 'Error')); };
+  const handleSubmit = (e) => { e.preventDefault(); api.post('/public/appointments', form).then(r => alert('Appointment requested: ' + r.data.appointment.reference)).catch(err => alert(err.response?.data?.error || 'Error')); };
 
   return (
     <div>

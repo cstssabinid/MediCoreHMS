@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import '../../styles/public.css';
 import hospitalLogo from '../../assets/logo.PNG';
+import api from '../../services/api';
 
 function Doctors() {
   const [doctors, setDoctors] = useState([]);
@@ -12,7 +12,7 @@ function Doctors() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('/api/public/doctors')
+    api.get('/public/doctors')
       .then(r => {
         setDoctors(r.data.doctors);
         setFilteredDoctors(r.data.doctors);
