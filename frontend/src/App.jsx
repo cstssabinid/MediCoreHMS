@@ -2,24 +2,10 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Public from './pages/Public';
-import Home from './pages/Home';
-import Doctors from './pages/public/Doctors';
-import DoctorProfile from './pages/public/DoctorProfile';
-import AppointmentsPublic from './pages/public/AppointmentsPublic';
-import Patients from './pages/Patients';
-import RegisterPatient from './pages/RegisterPatient';
-import Appointments from './pages/Appointments';
-import Triage from './pages/Triage';
-import Consultation from './pages/Consultation';
-import LabRequests from './pages/LabRequests';
-import Pharmacy from './pages/Pharmacy';
-import Billing from './pages/Billing';
-import Reports from './pages/Reports';
-import Users from './pages/Users';
-import AuditLogs from './pages/AuditLogs';
-import Settings from './pages/Settings';
 import ProtectedRoute from './components/ProtectedRoute';
 import ThemeToggle from './components/ThemeToggle';
+import { OurStory, CurrentWork, FutureVision, Stories, StoryDetail, HealthEducation, EducationDetail, Contact } from './pages/MissionPages';
+import { Donate, RequestGuidance, GetInvolved } from './pages/SupportPages';
 
 function App() {
   return (
@@ -29,9 +15,20 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/" element={<Public />} />
       <Route path="/public" element={<Public />} />
-      <Route path="/public/doctors" element={<Doctors />} />
-      <Route path="/public/doctors/:id" element={<DoctorProfile />} />
-      <Route path="/public/appointments" element={<AppointmentsPublic />} />
+      <Route path="/our-story" element={<OurStory />} />
+      <Route path="/current-work" element={<CurrentWork />} />
+      <Route path="/future-hospital-vision" element={<FutureVision />} />
+      <Route path="/health-education" element={<HealthEducation />} />
+      <Route path="/health-education/:slug" element={<EducationDetail />} />
+      <Route path="/stories" element={<Stories />} />
+      <Route path="/stories/:slug" element={<StoryDetail />} />
+      <Route path="/donate" element={<Donate />} />
+      <Route path="/request-guidance" element={<RequestGuidance />} />
+      <Route path="/get-involved" element={<GetInvolved />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/public/doctors" element={<Navigate to="/future-hospital-vision" replace />} />
+      <Route path="/public/doctors/:id" element={<Navigate to="/future-hospital-vision" replace />} />
+      <Route path="/public/appointments" element={<Navigate to="/request-guidance" replace />} />
       <Route
         path="/dashboard/*"
         element={

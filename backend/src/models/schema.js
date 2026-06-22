@@ -380,7 +380,254 @@ function createSchema(db) {
       FOREIGN KEY(portal_account_id) REFERENCES patient_portal_accounts(id),
       FOREIGN KEY(accessed_by) REFERENCES users(id)
     );
+
+    CREATE TABLE IF NOT EXISTS donations (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      donation_reference TEXT UNIQUE NOT NULL,
+      donation_type TEXT NOT NULL,
+      currency TEXT NOT NULL,
+      amount REAL NOT NULL,
+      custom_amount REAL,
+      support_area TEXT NOT NULL,
+      first_name TEXT NOT NULL,
+      last_name TEXT NOT NULL,
+      email TEXT NOT NULL,
+      phone TEXT,
+      country TEXT,
+      city TEXT,
+      message TEXT,
+      is_anonymous INTEGER DEFAULT 0,
+      consent_to_updates INTEGER DEFAULT 0,
+      payment_method TEXT,
+      payment_status TEXT DEFAULT 'Pledge Received',
+      pledge_status TEXT DEFAULT 'New',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS donor_profiles (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT UNIQUE NOT NULL,
+      first_name TEXT,
+      last_name TEXT,
+      phone TEXT,
+      country TEXT,
+      city TEXT,
+      consent_to_updates INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS donation_campaigns (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      slug TEXT UNIQUE NOT NULL,
+      description TEXT,
+      goal_amount REAL DEFAULT 0,
+      amount_raised REAL DEFAULT 0,
+      currency TEXT DEFAULT 'RWF',
+      category TEXT,
+      linked_story_id INTEGER,
+      status TEXT DEFAULT 'Active',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS guidance_requests (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      request_reference TEXT UNIQUE NOT NULL,
+      full_name TEXT NOT NULL,
+      age INTEGER,
+      gender TEXT,
+      phone TEXT NOT NULL,
+      email TEXT,
+      location TEXT,
+      main_concern TEXT NOT NULL,
+      symptoms_summary TEXT,
+      duration TEXT,
+      urgency_level TEXT,
+      previous_diagnosis TEXT,
+      current_medications TEXT,
+      support_needed TEXT,
+      consent INTEGER NOT NULL DEFAULT 0,
+      status TEXT DEFAULT 'New',
+      internal_notes TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS volunteer_applications (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      full_name TEXT NOT NULL,
+      email TEXT NOT NULL,
+      phone TEXT,
+      country TEXT,
+      city TEXT,
+      interest_type TEXT,
+      skills TEXT,
+      message TEXT,
+      status TEXT DEFAULT 'New',
+      notes TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS partner_inquiries (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      organization_name TEXT,
+      contact_name TEXT NOT NULL,
+      email TEXT NOT NULL,
+      phone TEXT,
+      country TEXT,
+      city TEXT,
+      partnership_type TEXT,
+      message TEXT,
+      status TEXT DEFAULT 'New',
+      notes TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS motivational_stories (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      story_reference TEXT UNIQUE NOT NULL,
+      title TEXT NOT NULL,
+      slug TEXT UNIQUE NOT NULL,
+      story_type TEXT NOT NULL,
+      display_name TEXT NOT NULL,
+      real_name_private TEXT,
+      age_group TEXT,
+      age_private_optional INTEGER,
+      gender_optional TEXT,
+      location_optional TEXT,
+      before_image_url TEXT,
+      before_image_alt TEXT,
+      after_image_url TEXT,
+      after_image_alt TEXT,
+      dreams_before_illness TEXT,
+      story_summary TEXT NOT NULL,
+      what_changed TEXT,
+      current_need TEXT,
+      legacy_message TEXT,
+      support_needed TEXT,
+      donation_campaign_id INTEGER,
+      consent_status TEXT NOT NULL,
+      consent_notes TEXT,
+      privacy_level TEXT NOT NULL,
+      is_founding_story INTEGER DEFAULT 0,
+      is_legacy_story INTEGER DEFAULT 0,
+      is_featured INTEGER DEFAULT 0,
+      show_on_homepage INTEGER DEFAULT 0,
+      show_on_donate_page INTEGER DEFAULT 0,
+      publication_status TEXT DEFAULT 'Draft',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS health_education_posts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      slug TEXT UNIQUE NOT NULL,
+      title TEXT NOT NULL,
+      category TEXT NOT NULL,
+      excerpt TEXT,
+      content TEXT,
+      publication_status TEXT DEFAULT 'Published',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS impact_metrics (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      metric_key TEXT UNIQUE NOT NULL,
+      label TEXT NOT NULL,
+      metric_value INTEGER DEFAULT 0,
+      is_verified INTEGER DEFAULT 0,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS project_roadmap_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      stage_number INTEGER NOT NULL,
+      title TEXT NOT NULL,
+      description TEXT,
+      status TEXT DEFAULT 'Planned',
+      display_order INTEGER DEFAULT 0
+    );
+
+    CREATE TABLE IF NOT EXISTS support_updates (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      summary TEXT,
+      report_month TEXT,
+      publication_status TEXT DEFAULT 'Draft',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
   `);
+
+  const foundingStory = db.prepare('SELECT id FROM motivational_stories WHERE slug = ?')
+    .get('the-sister-who-inspired-berwa-hospitals');
+  if (!foundingStory) {
+    db.prepare(`INSERT INTO motivational_stories (
+      story_reference, title, slug, story_type, display_name, before_image_url,
+      before_image_alt, after_image_url, after_image_alt, dreams_before_illness,
+      story_summary, what_changed, legacy_message, support_needed, consent_status,
+      privacy_level, is_founding_story, is_legacy_story, is_featured,
+      show_on_homepage, show_on_donate_page, publication_status
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 1, 1, 1, 1, 'Published')`)
+      .run(
+        'STORY-FOUNDING-001',
+        'The Sister Who Inspired BERWA HOSPITALS',
+        'the-sister-who-inspired-berwa-hospitals',
+        'Founding Story',
+        "Founder's Little Sister",
+        '/before.jpg',
+        'The founder’s little sister before her illness',
+        '/after.jpg',
+        'The founder’s little sister during her illness',
+        'Before illness, she had dreams, family love, and a future ahead of her. Her story reminds us that illness can interrupt a life, but it should never erase a person’s dignity.',
+        'She fought abdominal cancer for around three years and passed away on 18 January 2026. Her story became the first motivation behind BERWA HOSPITALS and its mission to support families facing serious illness.',
+        'Her illness showed how serious disease can affect the body, family stability, studies, finances, and hope. It also showed why guidance, awareness, pain support, and organized care matter.',
+        'BERWA HOSPITALS carries her memory forward through health education, community guidance, cancer awareness, and a future hospital vision.',
+        'Support helps BERWA HOSPITALS expand health education, patient guidance, cancer awareness, and future care systems.',
+        'Family Approved',
+        'Public with display name'
+      );
+  }
+
+  const campaigns = [
+    ['In Memory of the Founder’s Sister', 'in-memory-of-the-founders-sister', 'Support the mission inspired by her life and legacy.', 25000000, 'Legacy'],
+    ['Cancer Awareness Support', 'cancer-awareness-support', 'Help create careful, accessible cancer awareness resources.', 10000000, 'Cancer Awareness'],
+    ['Patient Guidance Fund', 'patient-guidance-fund', 'Support responsible guidance, referral information, and follow-up.', 8000000, 'Patient Support'],
+    ['Health Education Outreach', 'health-education-outreach', 'Help communities access practical health education.', 12000000, 'Health Education'],
+    ['Digital Patient Support System', 'digital-patient-support-system', 'Build secure tools for guidance and future care coordination.', 30000000, 'Digital Health'],
+    ['Future Hospital Foundation', 'future-hospital-foundation', 'Support planning and groundwork for the long-term hospital vision.', 100000000, 'Future Hospital']
+  ];
+  const insertCampaign = db.prepare('INSERT OR IGNORE INTO donation_campaigns (title, slug, description, goal_amount, currency, category) VALUES (?, ?, ?, ?, ?, ?)');
+  campaigns.forEach(campaign => insertCampaign.run(campaign[0], campaign[1], campaign[2], campaign[3], 'RWF', campaign[4]));
+
+  // Placeholder values only. Replace with verified real metrics before public reporting.
+  const metrics = [
+    ['education_reach', 'People reached through health education', 0],
+    ['community_supported', 'Community members supported', 0],
+    ['topics_shared', 'Health topics shared', 12],
+    ['guidance_requests', 'Guidance requests received', 0],
+    ['future_departments', 'Future services planned', 10],
+    ['supporters', 'Supporters and volunteers', 0]
+  ];
+  const insertMetric = db.prepare('INSERT OR IGNORE INTO impact_metrics (metric_key, label, metric_value) VALUES (?, ?, ?)');
+  metrics.forEach(metric => insertMetric.run(...metric));
+
+  const education = [
+    ['cancer-awareness', 'Cancer awareness', 'Cancer Awareness', 'Understanding warning signs and the importance of timely professional assessment.'],
+    ['abdominal-symptoms', 'When abdominal symptoms need medical attention', 'Cancer Awareness', 'Persistent or severe abdominal symptoms deserve qualified medical assessment.'],
+    ['hypertension-basics', 'Understanding hypertension', 'Chronic Conditions', 'Practical awareness about blood pressure and routine screening.'],
+    ['diabetes-basics', 'Understanding diabetes', 'Chronic Conditions', 'Foundational information about diabetes prevention and follow-up.'],
+    ['maternal-health', 'Maternal health', 'Family Health', 'General education for safer pregnancy and timely professional care.'],
+    ['child-health', 'Child health', 'Family Health', 'Age-appropriate prevention, nutrition, and warning-sign awareness.'],
+    ['mental-health', 'Mental health matters', 'Wellbeing', 'Recognizing distress and seeking qualified support early.'],
+    ['nutrition', 'Everyday nutrition', 'Prevention', 'Balanced, locally practical nutrition education.'],
+    ['infection-prevention', 'Infection prevention', 'Prevention', 'Hand hygiene, safer environments, and timely care.'],
+    ['urgent-care', 'When to seek urgent care', 'Urgent Care', 'Warning signs that require immediate attention at a licensed health facility.'],
+    ['pain-support', 'Pain awareness and support', 'Serious Illness', 'Pain should be assessed and managed by qualified healthcare professionals.'],
+    ['family-support', 'Supporting a seriously ill family member', 'Serious Illness', 'Practical, dignified ways families can offer support without replacing clinical care.']
+  ];
+  const insertPost = db.prepare('INSERT OR IGNORE INTO health_education_posts (slug, title, category, excerpt, content) VALUES (?, ?, ?, ?, ?)');
+  education.forEach(post => insertPost.run(post[0], post[1], post[2], post[3], `${post[3]} This educational content does not replace consultation with a licensed healthcare provider.`));
 }
 
 module.exports = {

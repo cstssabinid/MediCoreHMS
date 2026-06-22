@@ -14,6 +14,7 @@ const labRoutes = require('./routes/labRoutes');
 const billingRoutes = require('./routes/billingRoutes');
 const consultationRoutes = require('./routes/consultationRoutes');
 const publicRoutes = require('./routes/publicRoutes');
+const initiativeRoutes = require('./routes/initiativeRoutes');
 const { errorHandler } = require('./middleware/errorHandler');
 
 dotenv.config();
@@ -37,6 +38,7 @@ app.use('/api/labs', labRoutes);
 app.use('/api/billing', billingRoutes);
 app.use('/api/consultations', consultationRoutes);
 app.use('/api/public', publicRoutes);
+app.use('/api', initiativeRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', service: 'Berwa HMS backend' });

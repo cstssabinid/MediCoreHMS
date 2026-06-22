@@ -1,8 +1,14 @@
 import { NavLink } from 'react-router-dom';
 
 const menu = [
-  { path: '/', label: 'Dashboard' },
+  { path: '/dashboard', label: 'Dashboard' },
   { path: '/public', label: 'Public Site' },
+  { path: '/dashboard/donations', label: 'Donation Pledges' },
+  { path: '/dashboard/campaigns', label: 'Campaigns' },
+  { path: '/dashboard/stories', label: 'Stories' },
+  { path: '/dashboard/guidance-requests', label: 'Guidance Requests' },
+  { path: '/dashboard/get-involved', label: 'Volunteers & Partners' },
+  { path: '/dashboard/impact', label: 'Impact Metrics' },
   { path: '/patients', label: 'Patients' },
   { path: '/patients/new', label: 'Register Patient' },
   { path: '/appointments', label: 'Appointments' },

@@ -1,12 +1,23 @@
 :root {
   color-scheme: light;
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #f4f7fb;
+  background: #e8edf5;
   color: #202a44;
+  --system-page-overlay: rgba(235, 239, 247, 0.82);
+  --system-surface: rgba(255, 255, 255, 0.9);
+  --system-surface-strong: rgba(255, 255, 255, 0.96);
+  --system-border: rgba(31, 63, 139, 0.14);
+  --system-text: #202a44;
 }
 
 :root[data-theme='dark'] {
   color-scheme: dark;
+  background: #030a26;
+  --system-page-overlay: rgba(3, 10, 38, 0.82);
+  --system-surface: rgba(8, 20, 55, 0.9);
+  --system-surface-strong: rgba(8, 20, 55, 0.96);
+  --system-border: rgba(255, 255, 255, 0.13);
+  --system-text: #eef3ff;
 }
 
 * {
@@ -16,12 +27,29 @@
 body, html, #root {
   margin: 0;
   min-height: 100%;
+  max-width: 100%;
 }
 
 body {
   background:
-    linear-gradient(rgba(244, 247, 251, 0.58), rgba(244, 247, 251, 0.58)),
-    url('/background_image.png') center / cover fixed no-repeat;
+    linear-gradient(var(--system-page-overlay), var(--system-page-overlay)),
+    url('/background_image.png') center / min(72vw, 980px) auto fixed no-repeat;
+  background-color: #e8edf5;
+  color: var(--system-text);
+  transition: background-color 0.25s ease, color 0.25s ease;
+  overflow-x: hidden;
+}
+
+img, video, canvas, svg {
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+h1, h2, h3, h4, p, td, th, label, a, button {
+  overflow-wrap: anywhere;
 }
 
 .theme-toggle {
@@ -50,16 +78,20 @@ button, input, select, textarea {
 .app-shell {
   display: flex;
   min-height: 100vh;
+  min-width: 0;
 }
 
 .main-content {
   flex: 1;
+  min-width: 0;
   padding: 24px;
+  background: transparent;
 }
 
 .sidebar {
   width: 260px;
-  background: #ffffff;
+  flex: 0 0 260px;
+  background: var(--system-surface-strong);
   border-right: 1px solid #e8ecf3;
   display: flex;
   flex-direction: column;
@@ -103,6 +135,8 @@ button, input, select, textarea {
 .topbar .actions {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 14px;
 }
 
@@ -130,7 +164,7 @@ button, input, select, textarea {
 }
 
 .card {
-  background: white;
+  background: var(--system-surface);
   border-radius: 20px;
   padding: 20px;
   border: 1px solid #edf1f7;
@@ -151,7 +185,14 @@ button, input, select, textarea {
 
 .table-card table {
   width: 100%;
+  min-width: 640px;
   border-collapse: collapse;
+}
+
+.table-card {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .table-card th,
@@ -238,12 +279,12 @@ button, input, select, textarea {
   display: grid;
   min-height: 100vh;
   place-items: center;
-  background: linear-gradient(180deg, rgba(247, 249, 255, 0.78) 0%, rgba(238, 244, 251, 0.78) 100%);
+  background: transparent;
 }
 
 .login-box {
   width: min(440px, 92vw);
-  background: white;
+  background: var(--system-surface-strong);
   border-radius: 28px;
   padding: 34px;
   box-shadow: 0 24px 70px rgba(19, 37, 88, 0.12);
@@ -265,23 +306,117 @@ button, input, select, textarea {
 @media (max-width: 930px) {
   .sidebar {
     width: 100%;
+    flex: none;
     flex-direction: row;
+    align-items: center;
     overflow-x: auto;
     padding: 16px;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 90;
+  }
+  .sidebar-brand {
+    flex: 0 0 auto;
+    margin: 0;
   }
   .sidebar nav {
     display: flex;
     gap: 8px;
+    flex: 0 0 auto;
+  }
+  .sidebar nav a {
+    flex: 0 0 auto;
+    margin: 0;
+    white-space: nowrap;
   }
   .app-shell {
     flex-direction: column;
   }
+  .topbar {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 700px) {
+  body {
+    background-size: min(110vw, 760px) auto;
+  }
+  .main-content {
+    padding: 18px 14px 92px;
+  }
+  .topbar {
+    display: grid;
+    gap: 16px;
+  }
+  .topbar .actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+  .topbar .search {
+    grid-column: 1 / -1;
+  }
+  .topbar .search input {
+    width: 100%;
+    min-width: 0;
+  }
+  .topbar .profile {
+    min-width: 0;
+    justify-content: center;
+  }
+  .card-grid,
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .card {
+    padding: 17px;
+    border-radius: 16px;
+  }
+  .login-shell {
+    padding: 20px 14px;
+  }
+  .login-box {
+    width: 100%;
+    padding: 26px 20px;
+    border-radius: 20px;
+  }
+  .theme-toggle {
+    right: 12px;
+    bottom: 12px;
+    padding: 9px 12px;
+  }
+}
+
+@media (max-width: 420px) {
+  .sidebar {
+    padding: 10px 12px;
+  }
+  .sidebar-brand {
+    font-size: 1rem;
+  }
+  .sidebar nav a {
+    padding: 9px 11px;
+    font-size: .82rem;
+  }
+  .topbar h1 {
+    font-size: 1.2rem;
+  }
+  .topbar .actions {
+    grid-template-columns: 1fr 1fr;
+  }
+  .topbar .actions > button,
+  .topbar .profile {
+    width: 100%;
+  }
+  .table-card table {
+    min-width: 560px;
+  }
 }
 
 :root[data-theme='dark'] body {
-  background:
-    linear-gradient(rgba(3, 10, 38, 0.2), rgba(3, 10, 38, 0.2)),
-    url('/background_image.png') center / cover fixed no-repeat;
+  background-color: #030a26;
   color: #eef3ff;
 }
 
@@ -294,9 +429,10 @@ button, input, select, textarea {
 :root[data-theme='dark'] .sidebar,
 :root[data-theme='dark'] .card,
 :root[data-theme='dark'] .login-box {
-  background: rgba(8, 20, 55, 0.88);
+  background: var(--system-surface);
   color: #eef3ff;
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: var(--system-border);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.16);
 }
 
 :root[data-theme='dark'] .sidebar nav a,
@@ -339,5 +475,5 @@ button, input, select, textarea {
 }
 
 :root[data-theme='dark'] .login-shell {
-  background: rgba(3, 10, 38, 0.2);
+  background: transparent;
 }

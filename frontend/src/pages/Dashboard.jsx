@@ -14,6 +14,7 @@ import Users from './Users';
 import AuditLogs from './AuditLogs';
 import Settings from './Settings';
 import HomeDashboard from './HomeDashboard';
+import { DonationsAdmin, CampaignsAdmin, StoriesAdmin, GuidanceAdmin, InvolvedAdmin, ImpactAdmin } from './InitiativeAdmin';
 
 function Dashboard() {
   return (
@@ -35,6 +36,12 @@ function Dashboard() {
           <Route path="/users" element={<Users />} />
           <Route path="/audit" element={<AuditLogs />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="donations" element={<DonationsAdmin />} />
+          <Route path="campaigns" element={<CampaignsAdmin />} />
+          <Route path="stories" element={<StoriesAdmin />} />
+          <Route path="guidance-requests" element={<GuidanceAdmin />} />
+          <Route path="get-involved" element={<InvolvedAdmin />} />
+          <Route path="impact" element={<ImpactAdmin />} />
         </Routes>
       </main>
     </div>

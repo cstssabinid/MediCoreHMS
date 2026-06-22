@@ -38,7 +38,9 @@ function Doctors() {
         <div className="header-top">
           <div className="header-left">
             <div className="logo-section">
-              <img className="hospital-logo" src={hospitalLogo} alt="Berwa Hospitals" />
+              <Link to="/" aria-label="Go to landing page">
+                <img className="hospital-logo" src={hospitalLogo} alt="Berwa Hospitals" />
+              </Link>
             </div>
           </div>
           <div className="header-right">
